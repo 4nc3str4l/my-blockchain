@@ -16,6 +16,8 @@ func main() {
 		bc.Mine()
 	}
 	bc.Print()
+
+	// For now I allow negative balances (I'll tacke this when creating wallets)
 	log.Println(bc.ComputeBalance("A"))
 	log.Println(bc.ComputeBalance("B"))
 	log.Println(bc.ComputeBalance("My Address"))
