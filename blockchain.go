@@ -37,7 +37,7 @@ func NewBlockchain(addr string) *Blockchain {
 func (bc *Blockchain) Print() {
 	pattern := strings.Repeat("=", 25)
 	for i, block := range bc.Chain {
-		fmt.Printf("%s Block %d %s\n", pattern, i, pattern)
+		log.Printf("%s Block %d %s\n", pattern, i, pattern)
 		block.Print()
 	}
 }

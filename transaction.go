@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"math/big"
 	"strings"
 )
@@ -18,10 +18,10 @@ func NewTransaction(sender string, recipient string, value *big.Int) *Transactio
 }
 
 func (t *Transaction) Print() {
-	fmt.Printf("%s\n", strings.Repeat("-", 40))
-	fmt.Printf(" sender_address    %s\n", t.senderAddr)
-	fmt.Printf(" recipient_address %s\n", t.recipientAddr)
-	fmt.Printf(" value             %d\n", t.value)
+	log.Printf("%s\n", strings.Repeat("-", 40))
+	log.Printf(" sender_address    %s\n", t.senderAddr)
+	log.Printf(" recipient_address %s\n", t.recipientAddr)
+	log.Printf(" value             %d\n", t.value)
 }
 
 func (t *Transaction) MarshalJSON() ([]byte, error) {

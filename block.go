@@ -3,7 +3,7 @@ package main
 import (
 	"crypto/sha256"
 	"encoding/json"
-	"fmt"
+	"log"
 	"time"
 )
 
@@ -38,9 +38,9 @@ func (b *Block) Hash() [32]byte {
 }
 
 func (b *Block) Print() {
-	fmt.Printf("timestamp \t%d\n", b.timestamp)
-	fmt.Printf("nonce \t\t%d\n", b.nonce)
-	fmt.Printf("previous_hash \t%x\n", b.prevHash)
+	log.Printf("timestamp \t%d\n", b.timestamp)
+	log.Printf("nonce \t\t%d\n", b.nonce)
+	log.Printf("previous_hash \t%x\n", b.prevHash)
 	for _, t := range b.transactions {
 		t.Print()
 	}
