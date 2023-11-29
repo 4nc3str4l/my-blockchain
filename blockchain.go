@@ -2,15 +2,21 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"math/big"
 	"strings"
 )
 
-const MINING_DIFFICULTY = 5
+const (
+	MINING_DIFFICULTY = 3
+	COINBASE_ADDRESS  = "Satoshi Nakamoto"
+	MINING_REWARDS    = "5000000000" // sats (50 btc)
+)
 
 type Blockchain struct {
 	TransactionPool []*Transaction
 	Chain           []*Block
+	Address         string
 }
 
 func (bc *Blockchain) CreateBlock(nonce uint64, previousHash [32]byte) *Block {
@@ -20,8 +26,9 @@ func (bc *Blockchain) CreateBlock(nonce uint64, previousHash [32]byte) *Block {
 	return b
 }
 
-func NewBlockchain() *Blockchain {
+func NewBlockchain(addr string) *Blockchain {
 	bc := new(Blockchain)
+	bc.Address = addr
 	b := &Block{}
 	bc.CreateBlock(0, b.Hash())
 	return bc
@@ -68,4 +75,16 @@ func (bc *Blockchain) ProofOfWork() uint64 {
 		nonce += 1
 	}
 	return nonce
+}
+
+func (bc *Blockchain) Mining() bool {
+	// Here we include our own reward
+	reward, _ := new(big.Int).SetString(MINING_REWARDS, 10)
+	bc.AddTransaction(COINBASE_ADDRESS, bc.Address, reward)
+
+	nonce := bc.ProofOfWork()
+	previousHash := bc.LastBlock().Hash()
+	bc.CreateBlock(nonce, previousHash)
+	log.Println("action=⛏️, status=success🔵")
+	return true
 }

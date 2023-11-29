@@ -1,19 +1,16 @@
 package main
 
-import (
-	"math/big"
-)
+import "math/big"
 
 func main() {
-	bc := NewBlockchain()
-	lastBlock := bc.LastBlock()
-	var total_supply = new(big.Int)
-	total_supply.SetString("21000000000000000000", 10)
-	bc.AddTransaction("0x00", "0x00", total_supply)
+	bc := NewBlockchain("My Address")
 	for i := 0; i < 3; i++ {
-		bc.AddTransaction("0x00", "0x00", total_supply)
-		nonce := bc.ProofOfWork()
-		lastBlock = bc.CreateBlock(nonce, lastBlock.Hash())
+		quantity, success := new(big.Int).SetString("100000000", 10)
+		if !success {
+			panic("Could not parse quantity")
+		}
+		bc.AddTransaction("0x00", "0x00", quantity)
+		bc.Mining()
 	}
 	bc.Print()
 }
