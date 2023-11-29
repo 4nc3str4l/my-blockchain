@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 )
 
 type Blockchain struct {
@@ -24,8 +25,9 @@ func NewBlockchain() *Blockchain {
 }
 
 func (bc *Blockchain) Print() {
+	pattern := strings.Repeat("=", 25)
 	for i, block := range bc.chain {
-		fmt.Printf("Block %d \n", i)
+		fmt.Printf("%s Block %d %s\n", pattern, i, pattern)
 		block.Print()
 	}
 }
