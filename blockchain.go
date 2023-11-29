@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Blockchain struct {
 	transactionPool []string
@@ -15,7 +17,9 @@ func (bc *Blockchain) CreateBlock(nonce uint64, previousHash string) *Block {
 
 func NewBlockchain() *Blockchain {
 	bc := new(Blockchain)
-	bc.CreateBlock(0, "Genesis Hash")
+	for i := uint64(0); i < 3; i++ {
+		bc.CreateBlock(i, fmt.Sprintf("Hash %d", i))
+	}
 	return bc
 }
 
