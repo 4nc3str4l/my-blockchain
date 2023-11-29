@@ -1,6 +1,9 @@
 package main
 
-import "math/big"
+import (
+	"log"
+	"math/big"
+)
 
 func main() {
 	bc := NewBlockchain("My Address")
@@ -9,8 +12,9 @@ func main() {
 		if !success {
 			panic("Could not parse quantity")
 		}
-		bc.AddTransaction("0x00", "0x00", quantity)
-		bc.Mining()
+		bc.AddTransaction("A", "B", quantity)
+		bc.Mine()
 	}
 	bc.Print()
+	log.Println(bc.ComputeBalance("A"))
 }

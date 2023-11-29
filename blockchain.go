@@ -77,7 +77,7 @@ func (bc *Blockchain) ProofOfWork() uint64 {
 	return nonce
 }
 
-func (bc *Blockchain) Mining() bool {
+func (bc *Blockchain) Mine() bool {
 	// Here we include our own reward
 	reward, _ := new(big.Int).SetString(MINING_REWARDS, 10)
 	bc.AddTransaction(COINBASE_ADDRESS, bc.Address, reward)
@@ -87,4 +87,22 @@ func (bc *Blockchain) Mining() bool {
 	bc.CreateBlock(nonce, previousHash)
 	log.Println("action=⛏️, status=success🔵")
 	return true
+}
+
+func (bc *Blockchain) ComputeBalance(blockchainAddress string) *big.Int {
+	totalAmmount := new(big.Int)
+	totalAmmount, _ = totalAmmount.SetString("0", 10)
+	for _, b := range bc.Chain {
+		for _, t := range b.transactions {
+			value := t.value
+			if blockchainAddress == t.recipientAddr {
+				totalAmmount.Add(totalAmmount, value)
+			}
+
+			if blockchainAddress == t.senderAddr {
+				totalAmmount.Sub(totalAmmount, value)
+			}
+		}
+	}
+	return totalAmmount
 }
