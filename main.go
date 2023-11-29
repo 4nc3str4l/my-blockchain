@@ -1,5 +1,6 @@
 package main
 
 func main() {
-	InitBlockchain()
+	bc := NewBlockchain()
+	bc.Print()
 }

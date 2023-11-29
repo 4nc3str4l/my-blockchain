@@ -36,8 +36,3 @@ func (bc *Blockchain) Print() {
 func (bc *Blockchain) LastBlock() *Block {
 	return bc.Chain[len(bc.Chain)-1]
 }
-
-func InitBlockchain() {
-	bc := NewBlockchain()
-	bc.Print()
-}
