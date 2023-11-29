@@ -2,26 +2,25 @@ package main
 
 import (
 	"fmt"
+	"math/big"
 	"strings"
 )
 
 type Blockchain struct {
-	TransactionPool []string
+	TransactionPool []*Transaction
 	Chain           []*Block
 }
 
 func (bc *Blockchain) CreateBlock(nonce uint64, previousHash [32]byte) *Block {
-	b := NewBlock(nonce, previousHash)
+	b := NewBlock(nonce, previousHash, bc.TransactionPool)
 	bc.Chain = append(bc.Chain, b)
+	bc.TransactionPool = []*Transaction{}
 	return b
 }
 
 func NewBlockchain() *Blockchain {
 	bc := new(Blockchain)
-	lastBlock := &Block{}
-	for i := uint64(0); i < 3; i++ {
-		lastBlock = bc.CreateBlock(i, lastBlock.Hash())
-	}
+
 	return bc
 }
 
@@ -35,4 +34,9 @@ func (bc *Blockchain) Print() {
 
 func (bc *Blockchain) LastBlock() *Block {
 	return bc.Chain[len(bc.Chain)-1]
+}
+
+func (bc *Blockchain) AddTransaction(sender string, recipient string, value *big.Int) {
+	t := NewTransaction(sender, recipient, value)
+	bc.TransactionPool = append(bc.TransactionPool, t)
 }
