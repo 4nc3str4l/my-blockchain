@@ -9,12 +9,12 @@ import (
 
 type Block struct {
 	Nonce        uint64   `json:"nonce"`
-	PrevHash     string   `json:"previous_hash"`
+	PrevHash     [32]byte `json:"previous_hash"`
 	Timestamp    uint64   `json:"timestamp"`
 	Transactions []string `json:"transactions"`
 }
 
-func NewBlock(nonce uint64, previousHash string) *Block {
+func NewBlock(nonce uint64, previousHash [32]byte) *Block {
 	b := new(Block)
 	b.Timestamp = uint64(time.Now().UnixNano())
 	b.Nonce = nonce
@@ -30,7 +30,7 @@ func (b *Block) Hash() [32]byte {
 func (b *Block) Print() {
 	fmt.Printf("timestamp \t%d\n", b.Timestamp)
 	fmt.Printf("nonce \t\t%d\n", b.Nonce)
-	fmt.Printf("previous_hash \t%s\n", b.PrevHash)
+	fmt.Printf("previous_hash \t%x\n", b.PrevHash)
 	fmt.Printf("transactions \t%s\n", b.Transactions)
 	b.Hash()
 }

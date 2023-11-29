@@ -10,7 +10,7 @@ type Blockchain struct {
 	Chain           []*Block
 }
 
-func (bc *Blockchain) CreateBlock(nonce uint64, previousHash string) *Block {
+func (bc *Blockchain) CreateBlock(nonce uint64, previousHash [32]byte) *Block {
 	b := NewBlock(nonce, previousHash)
 	bc.Chain = append(bc.Chain, b)
 	return b
@@ -18,8 +18,9 @@ func (bc *Blockchain) CreateBlock(nonce uint64, previousHash string) *Block {
 
 func NewBlockchain() *Blockchain {
 	bc := new(Blockchain)
+	lastBlock := &Block{}
 	for i := uint64(0); i < 3; i++ {
-		bc.CreateBlock(i, fmt.Sprintf("Hash %d", i))
+		lastBlock = bc.CreateBlock(i, lastBlock.Hash())
 	}
 	return bc
 }
@@ -30,6 +31,10 @@ func (bc *Blockchain) Print() {
 		fmt.Printf("%s Block %d %s\n", pattern, i, pattern)
 		block.Print()
 	}
+}
+
+func (bc *Blockchain) LastBlock() *Block {
+	return bc.Chain[len(bc.Chain)-1]
 }
 
 func InitBlockchain() {
