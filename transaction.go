@@ -63,8 +63,8 @@ func (t *UnsignedTransaction) GenerateSignature() *Signature {
 
 func (t *UnsignedTransaction) MarshalJSON() ([]byte, error) {
 	return json.Marshal(struct {
-		Sender    string   `json:"sender_blockchain_address"`
-		Recipient string   `json:"recipient_blockchain_adddress"`
+		Sender    string   `json:"sender_address"`
+		Recipient string   `json:"recipient_address"`
 		Value     *big.Int `json:"value"`
 	}{
 		Sender:    t.senderBlockchainAddress,

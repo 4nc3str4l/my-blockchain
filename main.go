@@ -10,24 +10,15 @@ func main() {
 	if !success {
 		panic("Could not parse quantity")
 	}
-	w := NewWallet()
-	log.Println(w.PrivateKeyStr())
-	log.Println(w.PublicKeyStr())
-	log.Println(w.BlockchainAddress())
 
-	t := NewUnsignedTransaction(w.PrivateKey(), w.PublicKey(), w.BlockchainAddress(), "B", quantity)
-	log.Printf("signature %s \n", t.GenerateSignature())
+	walletMiner := NewWallet()
+	walletA := NewWallet()
+	walletB := NewWallet()
 
-	bc := NewBlockchain("My Address")
-	for i := 0; i < 3; i++ {
-		bc.AddTransaction("A", "B", quantity)
-		bc.Mine()
-	}
-	bc.Print()
+	t := NewUnsignedTransaction(walletA.PrivateKey(), walletA.PublicKey(), walletA.BlockchainAddress(), walletB.BlockchainAddress(), quantity)
 
-	// For now I allow negative balances (I'll tacke this when creating wallets)
-	log.Println(bc.ComputeBalance("A"))
-	log.Println(bc.ComputeBalance("B"))
-	log.Println(bc.ComputeBalance("My Address"))
-
+	// Blockchain
+	blockchain := NewBlockchain(walletMiner.BlockchainAddress())
+	isAdded := blockchain.AddTransaction(walletA.BlockchainAddress(), walletB.BlockchainAddress(), quantity, walletA.PublicKey(), t.GenerateSignature())
+	log.Println("Added: ", isAdded)
 }

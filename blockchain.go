@@ -1,6 +1,9 @@
 package main
 
 import (
+	"crypto/ecdsa"
+	"crypto/sha256"
+	"encoding/json"
 	"fmt"
 	"log"
 	"math/big"
@@ -26,6 +29,12 @@ func (bc *Blockchain) CreateBlock(nonce uint64, previousHash [32]byte) *Block {
 	return b
 }
 
+func (bc *Blockchain) VerifyTransactionSignature(senderPublicKey *ecdsa.PublicKey, s *Signature, t *Transaction) bool {
+	m, _ := json.Marshal(t)
+	h := sha256.Sum256([]byte(m))
+	return ecdsa.Verify(senderPublicKey, h[:], s.R, s.S)
+}
+
 func NewBlockchain(addr string) *Blockchain {
 	bc := new(Blockchain)
 	bc.Address = addr
@@ -46,9 +55,23 @@ func (bc *Blockchain) LastBlock() *Block {
 	return bc.Chain[len(bc.Chain)-1]
 }
 
-func (bc *Blockchain) AddTransaction(sender string, recipient string, value *big.Int) {
+func (bc *Blockchain) AddTransaction(sender string, recipient string, value *big.Int, senderPublicKey *ecdsa.PublicKey, s *Signature) bool {
 	t := NewTransaction(sender, recipient, value)
-	bc.TransactionPool = append(bc.TransactionPool, t)
+
+	// If it is a mining reward we don't need to verify the signature
+	if sender == COINBASE_ADDRESS {
+		bc.TransactionPool = append(bc.TransactionPool, t)
+		return true
+	}
+
+	if bc.VerifyTransactionSignature(senderPublicKey, s, t) {
+		bc.TransactionPool = append(bc.TransactionPool, t)
+		return true
+	} else {
+		log.Println("Error: Verify Transaction")
+	}
+	return false
+
 }
 
 func (bc *Blockchain) CopyTransactionPool() []*Transaction {
@@ -80,7 +103,7 @@ func (bc *Blockchain) ProofOfWork() uint64 {
 func (bc *Blockchain) Mine() bool {
 	// Here we include our own reward
 	reward, _ := new(big.Int).SetString(MINING_REWARDS, 10)
-	bc.AddTransaction(COINBASE_ADDRESS, bc.Address, reward)
+	bc.AddTransaction(COINBASE_ADDRESS, bc.Address, reward, nil, nil)
 
 	nonce := bc.ProofOfWork()
 	previousHash := bc.LastBlock().Hash()
