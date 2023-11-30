@@ -12,7 +12,7 @@ import (
 
 const (
 	MINING_DIFFICULTY = 3
-	COINBASE_ADDRESS  = "Satoshi Nakamoto"
+	COINBASE_ADDRESS  = "CoinbaseTransaction"
 	MINING_REWARDS    = "5000000000" // sats (50 btc)
 )
 
@@ -65,10 +65,14 @@ func (bc *Blockchain) AddTransaction(sender string, recipient string, value *big
 	}
 
 	if bc.VerifyTransactionSignature(senderPublicKey, s, t) {
+		if bc.ComputeBalance(sender).Cmp(value) < 0 {
+			log.Println("ERROR: Not enough balance in a wallet")
+			return false
+		}
 		bc.TransactionPool = append(bc.TransactionPool, t)
 		return true
 	} else {
-		log.Println("Error: Verify Transaction")
+		log.Println("ERROR: Verify Transaction")
 	}
 	return false
 
