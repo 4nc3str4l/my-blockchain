@@ -5,7 +5,6 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/json"
-	"fmt"
 	"log"
 	"math/big"
 	"strings"
@@ -48,15 +47,6 @@ type UnsignedTransaction struct {
 	senderBlockchainAddress    string
 	recipientBlockchainAddress string
 	value                      *big.Int
-}
-
-type Signature struct {
-	R *big.Int
-	S *big.Int
-}
-
-func (s *Signature) String() string {
-	return fmt.Sprintf("%x%x", s.R, s.S)
 }
 
 func NewUnsignedTransaction(privateKey *ecdsa.PrivateKey, publicKey *ecdsa.PublicKey,

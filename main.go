@@ -7,6 +7,9 @@ import (
 
 func main() {
 	quantity, success := new(big.Int).SetString("100000000", 10)
+	if !success {
+		panic("Could not parse quantity")
+	}
 	w := NewWallet()
 	log.Println(w.PrivateKeyStr())
 	log.Println(w.PublicKeyStr())
@@ -17,10 +20,6 @@ func main() {
 
 	bc := NewBlockchain("My Address")
 	for i := 0; i < 3; i++ {
-
-		if !success {
-			panic("Could not parse quantity")
-		}
 		bc.AddTransaction("A", "B", quantity)
 		bc.Mine()
 	}
