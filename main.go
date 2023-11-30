@@ -21,4 +21,11 @@ func main() {
 	blockchain := NewBlockchain(walletMiner.BlockchainAddress())
 	isAdded := blockchain.AddTransaction(walletA.BlockchainAddress(), walletB.BlockchainAddress(), quantity, walletA.PublicKey(), t.GenerateSignature())
 	log.Println("Added: ", isAdded)
+
+	blockchain.Mine()
+	blockchain.Print()
+
+	log.Printf("A %d\n", blockchain.ComputeBalance(walletA.BlockchainAddress()))
+	log.Printf("B %d\n", blockchain.ComputeBalance(walletB.BlockchainAddress()))
+	log.Printf("M %d\n", blockchain.ComputeBalance(walletMiner.BlockchainAddress()))
 }
