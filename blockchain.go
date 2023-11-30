@@ -11,9 +11,10 @@ import (
 )
 
 const (
-	MINING_DIFFICULTY = 3
-	COINBASE_ADDRESS  = "CoinbaseTransaction"
-	MINING_REWARDS    = "5000000000" // sats (50 btc)
+	MINING_DIFFICULTY      = 3
+	COINBASE_ADDRESS       = "CoinbaseTransaction"
+	MINING_REWARDS         = "5000000000" // sats (50 btc)
+	ALLOW_NEGATIVE_BALANCE = true         // For debugging purposes
 )
 
 type Blockchain struct {
@@ -65,7 +66,7 @@ func (bc *Blockchain) AddTransaction(sender string, recipient string, value *big
 	}
 
 	if bc.VerifyTransactionSignature(senderPublicKey, s, t) {
-		if bc.ComputeBalance(sender).Cmp(value) < 0 {
+		if !ALLOW_NEGATIVE_BALANCE && bc.ComputeBalance(sender).Cmp(value) < 0 {
 			log.Println("ERROR: Not enough balance in a wallet")
 			return false
 		}
