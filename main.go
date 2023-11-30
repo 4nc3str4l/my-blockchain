@@ -6,6 +6,11 @@ import (
 )
 
 func main() {
+
+	w := NewWallet()
+	log.Println(w.PrivateKeyStr())
+	log.Println(w.PublicKeyStr())
+
 	bc := NewBlockchain("My Address")
 	for i := 0; i < 3; i++ {
 		quantity, success := new(big.Int).SetString("100000000", 10)
