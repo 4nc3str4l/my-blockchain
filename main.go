@@ -10,6 +10,7 @@ func main() {
 	w := NewWallet()
 	log.Println(w.PrivateKeyStr())
 	log.Println(w.PublicKeyStr())
+	log.Println(w.BlockchainAddress())
 
 	bc := NewBlockchain("My Address")
 	for i := 0; i < 3; i++ {
