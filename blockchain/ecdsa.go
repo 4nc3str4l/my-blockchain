@@ -38,3 +38,10 @@ func PublicKeyFromString(s string) *ecdsa.PublicKey {
 		Y:     &y,
 	}
 }
+
+func PrivateKeyFromString(s string, publicKey *ecdsa.PublicKey) *ecdsa.PrivateKey {
+	b, _ := hex.DecodeString(s[:])
+	var bi big.Int
+	_ = bi.SetBytes(b)
+	return &ecdsa.PrivateKey{PublicKey: *publicKey, D: &bi}
+}
