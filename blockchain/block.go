@@ -3,6 +3,7 @@ package blockchain
 import (
 	"crypto/sha256"
 	"encoding/json"
+	"fmt"
 	"log"
 	"time"
 )
@@ -23,17 +24,22 @@ func NewBlock(nonce uint64, previousHash [32]byte, transactions []*Transaction) 
 	}
 }
 
-func (b *Block) Hash() [32]byte {
-	m, _ := json.Marshal(&struct {
+func (b *Block) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
 		Nonce        uint64         `json:"nonce"`
-		PrevHash     [32]byte       `json:"previous_hash"`
+		PrevHash     string         `json:"previous_hash"`
 		Timestamp    uint64         `json:"timestamp"`
 		Transactions []*Transaction `json:"transactions"`
 	}{
 		Nonce:        b.nonce,
+		PrevHash:     fmt.Sprintf("%x", b.prevHash),
 		Timestamp:    b.timestamp,
 		Transactions: b.transactions,
 	})
+}
+
+func (b *Block) Hash() [32]byte {
+	m, _ := json.Marshal(b)
 	return sha256.Sum256([]byte(m))
 }
 

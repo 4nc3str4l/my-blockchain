@@ -21,6 +21,24 @@ type Blockchain struct {
 	TransactionPool []*Transaction
 	Chain           []*Block
 	Address         string
+	port            uint16
+}
+
+func NewBlockchain(addr string, port uint16) *Blockchain {
+	bc := new(Blockchain)
+	bc.Address = addr
+	bc.port = port
+	b := &Block{}
+	bc.CreateBlock(0, b.Hash())
+	return bc
+}
+
+func (bc *Blockchain) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Chain []*Block `json:"chain"`
+	}{
+		Chain: bc.Chain,
+	})
 }
 
 func (bc *Blockchain) CreateBlock(nonce uint64, previousHash [32]byte) *Block {
@@ -34,14 +52,6 @@ func (bc *Blockchain) VerifyTransactionSignature(senderPublicKey *ecdsa.PublicKe
 	m, _ := json.Marshal(t)
 	h := sha256.Sum256([]byte(m))
 	return ecdsa.Verify(senderPublicKey, h[:], s.R, s.S)
-}
-
-func NewBlockchain(addr string) *Blockchain {
-	bc := new(Blockchain)
-	bc.Address = addr
-	b := &Block{}
-	bc.CreateBlock(0, b.Hash())
-	return bc
 }
 
 func (bc *Blockchain) Print() {
