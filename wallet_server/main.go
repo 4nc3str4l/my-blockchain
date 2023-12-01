@@ -3,6 +3,8 @@ package main
 import (
 	"4nc3str4l/my-blockchain/blockchain"
 	"4nc3str4l/my-blockchain/utils"
+	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -51,10 +53,48 @@ func (ws *WalletServer) Wallet(w http.ResponseWriter, req *http.Request) {
 		log.Println("ERROR: Invalid HTTP Method")
 	}
 }
+
+type TransactionRequest struct {
+	SenderPrivateKey           *string `json:"sender_private_key"` // I would never do that in a real blockchain (sign in js instead)
+	SenderBlockchainAddress    *string `json:"sender_blockchain_address"`
+	RecipientBlockchainAddress *string `json:"recipient_blockchain_address"`
+	SenderPublicKey            *string `json:"sender_public_key"`
+	Value                      *string `json:"value"`
+}
+
+func (tr *TransactionRequest) Validate() bool {
+	return (tr.SenderPrivateKey != nil &&
+		tr.SenderBlockchainAddress != nil &&
+		tr.RecipientBlockchainAddress != nil &&
+		tr.SenderPublicKey != nil &&
+		tr.Value != nil)
+
+}
+
 func (ws *WalletServer) CreateTransaction(w http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	case http.MethodPost:
-		io.WriteString(w, utils.JsonStatus("Placeholder answer"))
+		decoder := json.NewDecoder(req.Body)
+		var t TransactionRequest
+		err := decoder.Decode(&t)
+		if err != nil {
+			log.Printf("ERROR: %v", err)
+			io.WriteString(w, string(utils.JsonStatus("fail")))
+			return
+		}
+
+		if !t.Validate() {
+			log.Println("ERROR: missing field(s)")
+			io.WriteString(w, string(utils.JsonStatus("fail")))
+			return
+		}
+
+		fmt.Println(*t.SenderPublicKey)
+		fmt.Println(*t.SenderBlockchainAddress)
+		fmt.Println(*t.SenderPrivateKey)
+		fmt.Println(*t.RecipientBlockchainAddress)
+		fmt.Println(*t.Value)
+
 	default:
 		w.WriteHeader(http.StatusBadRequest)
 		log.Println("ERROR: Invalid HTTP Method")
