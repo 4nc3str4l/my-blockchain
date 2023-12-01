@@ -4,7 +4,6 @@ import (
 	"4nc3str4l/my-blockchain/blockchain"
 	"4nc3str4l/my-blockchain/utils"
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -88,12 +87,6 @@ func (ws *WalletServer) CreateTransaction(w http.ResponseWriter, req *http.Reque
 			io.WriteString(w, string(utils.JsonStatus("fail")))
 			return
 		}
-
-		fmt.Println(*t.SenderPublicKey)
-		fmt.Println(*t.SenderBlockchainAddress)
-		fmt.Println(*t.SenderPrivateKey)
-		fmt.Println(*t.RecipientBlockchainAddress)
-		fmt.Println(*t.Value)
 
 	default:
 		w.WriteHeader(http.StatusBadRequest)
