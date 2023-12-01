@@ -2,6 +2,7 @@ package main
 
 import (
 	"4nc3str4l/my-blockchain/blockchain"
+	"4nc3str4l/my-blockchain/utils"
 	"io"
 	"log"
 	"net/http"
@@ -46,7 +47,16 @@ func (ws *WalletServer) Wallet(w http.ResponseWriter, req *http.Request) {
 		m, _ := myWallet.MarshallJSON()
 		io.WriteString(w, string(m[:]))
 	default:
-		w.WriteHeader(http.StatusBadGateway)
+		w.WriteHeader(http.StatusBadRequest)
+		log.Println("ERROR: Invalid HTTP Method")
+	}
+}
+func (ws *WalletServer) CreateTransaction(w http.ResponseWriter, req *http.Request) {
+	switch req.Method {
+	case http.MethodPost:
+		io.WriteString(w, utils.JsonStatus("Placeholder answer"))
+	default:
+		w.WriteHeader(http.StatusBadRequest)
 		log.Println("ERROR: Invalid HTTP Method")
 	}
 }
@@ -54,5 +64,6 @@ func (ws *WalletServer) Wallet(w http.ResponseWriter, req *http.Request) {
 func (ws *WalletServer) Run() {
 	http.HandleFunc("/", ws.Index)
 	http.HandleFunc("/wallet", ws.Wallet)
+	http.HandleFunc("/transaction", ws.CreateTransaction)
 	log.Fatal(http.ListenAndServe("0.0.0.0:"+strconv.Itoa(int(ws.Port())), nil))
 }
