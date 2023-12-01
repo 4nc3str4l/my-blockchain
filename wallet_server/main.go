@@ -4,8 +4,10 @@ import (
 	"4nc3str4l/my-blockchain/blockchain"
 	"4nc3str4l/my-blockchain/utils"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
+	"math/big"
 	"net/http"
 	"strconv"
 	"text/template"
@@ -78,15 +80,28 @@ func (ws *WalletServer) CreateTransaction(w http.ResponseWriter, req *http.Reque
 		err := decoder.Decode(&t)
 		if err != nil {
 			log.Printf("ERROR: %v", err)
-			io.WriteString(w, string(utils.JsonStatus("fail")))
+			io.WriteString(w, utils.JsonStatus("fail"))
 			return
 		}
 
 		if !t.Validate() {
 			log.Println("ERROR: missing field(s)")
-			io.WriteString(w, string(utils.JsonStatus("fail")))
+			io.WriteString(w, utils.JsonStatus("fail"))
 			return
 		}
+
+		publicKey := blockchain.PublicKeyFromString(*t.SenderPublicKey)
+		privateKey := blockchain.PrivateKeyFromString(*t.SenderPrivateKey, publicKey)
+		value, valid := new(big.Int).SetString(*t.Value, 10)
+
+		if !valid {
+			log.Println("ERROR: Invalid Value")
+			io.WriteString(w, utils.JsonStatus("fail"))
+		}
+
+		fmt.Println(publicKey)
+		fmt.Println(privateKey)
+		fmt.Printf("%d\n", value)
 
 	default:
 		w.WriteHeader(http.StatusBadRequest)
