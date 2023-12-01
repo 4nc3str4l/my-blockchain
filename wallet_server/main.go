@@ -4,7 +4,6 @@ import (
 	"4nc3str4l/my-blockchain/blockchain"
 	"4nc3str4l/my-blockchain/utils"
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"math/big"
@@ -99,9 +98,8 @@ func (ws *WalletServer) CreateTransaction(w http.ResponseWriter, req *http.Reque
 			io.WriteString(w, utils.JsonStatus("fail"))
 		}
 
-		fmt.Println(publicKey)
-		fmt.Println(privateKey)
-		fmt.Printf("%d\n", value)
+		w.Header().Add("Content-Type", "application/json")
+		// TODO: Send transaction to the blockchain node
 
 	default:
 		w.WriteHeader(http.StatusBadRequest)
